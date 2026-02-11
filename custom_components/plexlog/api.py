@@ -51,7 +51,7 @@ class PlexlogApi:
         """Make an API request."""
         url = self._build_url(**params)
         try:
-            async with self._session.get(url, timeout=aiohttp.ClientTimeout(total=30)) as resp:
+            async with self._session.get(url, timeout=aiohttp.ClientTimeout(total=30), ssl=False) as resp:
                 if resp.status == 401 or resp.status == 403:
                     raise PlexlogAuthError("Invalid API key or unauthorized access")
                 if resp.status != 200:
