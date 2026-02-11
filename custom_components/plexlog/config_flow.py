@@ -72,8 +72,8 @@ class PlexlogConfigFlow(ConfigFlow, domain=DOMAIN):
                 title = f"Plexlog {user_input[CONF_PLANT_ID]}"
                 try:
                     plant_info = await api.async_get_plant_info()
-                    if isinstance(plant_info, dict) and "Name" in plant_info:
-                        title = plant_info["Name"]
+                    if isinstance(plant_info, dict) and "name" in plant_info:
+                        title = plant_info["name"]
                 except Exception:
                     pass
 

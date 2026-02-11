@@ -153,19 +153,19 @@ PLANT_INFO_SENSORS: tuple[PlexlogSensorEntityDescription, ...] = (
     PlexlogSensorEntityDescription(
         key="plant_name",
         translation_key="plant_name",
-        data_path="plant_info.Name",
+        data_path="plant_info.name",
     ),
     PlexlogSensorEntityDescription(
         key="plant_capacity",
         translation_key="plant_capacity",
-        data_path="plant_info.Anlagenleistung",
-        native_unit_of_measurement=UnitOfPower.KILO_WATT,
+        data_path="plant_info.facilitypoweroutput",
+        native_unit_of_measurement=UnitOfPower.WATT,
         device_class=SensorDeviceClass.POWER,
     ),
     PlexlogSensorEntityDescription(
         key="plant_annual_target",
         translation_key="plant_annual_target",
-        data_path="plant_info.Jahressoll",
+        data_path="plant_info.specificannualoutput",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
     ),
@@ -245,7 +245,7 @@ class PlexlogSensor(CoordinatorEntity[PlexlogCoordinator], SensorEntity):
         self._attr_unique_id = f"{entry.entry_id}_{description.key}"
         self._attr_device_info = {
             "identifiers": {(DOMAIN, entry.entry_id)},
-            "name": coordinator.plant_info.get("Name", "Plexlog PV System"),
+            "name": coordinator.plant_info.get("name", "Plexlog PV System"),
             "manufacturer": "Plexlog",
             "model": "PV Monitoring System",
         }

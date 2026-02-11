@@ -58,12 +58,15 @@ class PlexlogCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             plant_data = await self.api.async_get_plant_data(
                 from_date=today, to_date=today, interval=INTERVAL_5MINS
             )
+            _LOGGER.debug("Plexlog plant data (5min) keys: %s", list(plant_data.keys()) if isinstance(plant_data, dict) else type(plant_data))
+            _LOGGER.debug("Plexlog plant data (5min) raw: %s", plant_data)
             data["plant"] = self._extract_latest(plant_data)
 
             # Fetch daily totals for energy sums
             daily_data = await self.api.async_get_plant_data(
                 from_date=today, to_date=today
             )
+            _LOGGER.debug("Plexlog daily data keys: %s", list(daily_data.keys()) if isinstance(daily_data, dict) else type(daily_data))
             data["plant_daily"] = self._extract_sums(daily_data)
 
         except PlexlogAuthError as err:
@@ -72,8 +75,8 @@ class PlexlogCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             raise UpdateFailed(f"Error fetching plant data: {err}") from err
 
         # Fetch optional device types based on plant capabilities
-        has_battery = self.plant_info.get("hat_Batterie", False)
-        has_consumption = self.plant_info.get("hat_Verbrauch", False)
+        has_battery = self.plant_info.get("has_battery", False)
+        has_consumption = self.plant_info.get("has_consumption", False)
 
         try:
             inverter_data = await self.api.async_get_inverter_data(
@@ -111,10 +114,18 @@ class PlexlogCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         return data
 
+    @staticmethod
+    def _get_entry_value(entry: dict) -> Any | None:
+        """Extract value from a data entry dict (supports both EN and DE keys)."""
+        for key in ("value", "Wert"):
+            if key in entry:
+                return entry[key]
+        return None
+
     def _extract_latest(self, response: Any) -> dict[str, Any]:
         """Extract the latest values from a plant API response.
 
-        The API returns lists of {Zeitstempel, Wert} pairs per metric.
+        The API returns lists of {timestamp, value} pairs per metric.
         We extract the last (most recent) value from each.
         """
         result: dict[str, Any] = {}
@@ -124,8 +135,12 @@ class PlexlogCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         for key, value in response.items():
             if isinstance(value, list) and value:
                 last_entry = value[-1]
-                if isinstance(last_entry, dict) and "Wert" in last_entry:
-                    result[key] = last_entry["Wert"]
+                if isinstance(last_entry, dict):
+                    val = self._get_entry_value(last_entry)
+                    if val is not None:
+                        result[key] = val
+                    else:
+                        result[key] = last_entry
                 elif isinstance(last_entry, (int, float)):
                     result[key] = last_entry
                 else:
@@ -146,8 +161,12 @@ class PlexlogCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         for key, value in response.items():
             if isinstance(value, list) and value:
                 last_entry = value[-1]
-                if isinstance(last_entry, dict) and "Wert" in last_entry:
-                    result[key] = last_entry["Wert"]
+                if isinstance(last_entry, dict):
+                    val = self._get_entry_value(last_entry)
+                    if val is not None:
+                        result[key] = val
+                    else:
+                        result[key] = last_entry
                 elif isinstance(last_entry, (int, float)):
                     result[key] = last_entry
                 else:
@@ -172,8 +191,10 @@ class PlexlogCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 for metric_key, metric_value in device_data.items():
                     if isinstance(metric_value, list) and metric_value:
                         last_entry = metric_value[-1]
-                        if isinstance(last_entry, dict) and "Wert" in last_entry:
-                            device_result[metric_key] = last_entry["Wert"]
+                        if isinstance(last_entry, dict):
+                            val = self._get_entry_value(last_entry)
+                            if val is not None:
+                                device_result[metric_key] = val
                         elif isinstance(last_entry, (int, float)):
                             device_result[metric_key] = last_entry
                     elif isinstance(metric_value, (int, float)):
@@ -181,8 +202,10 @@ class PlexlogCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 result[device_key] = device_result
             elif isinstance(device_data, list) and device_data:
                 last_entry = device_data[-1]
-                if isinstance(last_entry, dict) and "Wert" in last_entry:
-                    result[device_key] = last_entry["Wert"]
+                if isinstance(last_entry, dict):
+                    val = self._get_entry_value(last_entry)
+                    if val is not None:
+                        result[device_key] = val
                 elif isinstance(last_entry, (int, float)):
                     result[device_key] = last_entry
 
