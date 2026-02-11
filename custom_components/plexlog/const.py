@@ -10,7 +10,7 @@ CONF_BASE_URL = "base_url"
 
 DEFAULT_SCAN_INTERVAL = timedelta(minutes=5)
 
-API_PATH = "/api/pl"
+API_PATH = "/api/pl/"
 
 # API type parameter values
 TYPE_PLANT = "plant"

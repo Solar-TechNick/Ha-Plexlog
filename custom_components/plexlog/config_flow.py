@@ -18,7 +18,7 @@ _LOGGER = logging.getLogger(__name__)
 
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
-        vol.Required(CONF_BASE_URL, description={"suggested_value": "https://"}): str,
+        vol.Required(CONF_BASE_URL, description={"suggested_value": "http://"}): str,
         vol.Required(CONF_API_KEY): str,
         vol.Required(CONF_PLANT_ID): str,
     }
@@ -40,7 +40,7 @@ class PlexlogConfigFlow(ConfigFlow, domain=DOMAIN):
             # Normalize URL
             base_url = user_input[CONF_BASE_URL].rstrip("/")
             if not base_url.startswith(("http://", "https://")):
-                base_url = f"https://{base_url}"
+                base_url = f"http://{base_url}"
             user_input[CONF_BASE_URL] = base_url
 
             # Check for duplicate entries

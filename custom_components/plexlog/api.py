@@ -40,7 +40,7 @@ class PlexlogApi:
     def _build_url(self, **params: str) -> str:
         """Build API URL with parameters."""
         base_params = {
-            "apikey": self._api_key,
+            "api_key": self._api_key,
             "plant_id": self._plant_id,
         }
         base_params.update(params)
@@ -50,6 +50,7 @@ class PlexlogApi:
     async def _request(self, **params: str) -> Any:
         """Make an API request."""
         url = self._build_url(**params)
+        _LOGGER.debug("Plexlog API request: %s", url.split("api_key=")[0] + "api_key=***")
         try:
             async with self._session.get(url, timeout=aiohttp.ClientTimeout(total=30), ssl=False) as resp:
                 if resp.status == 401 or resp.status == 403:
