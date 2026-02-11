@@ -148,6 +148,34 @@ PLANT_ENERGY_SENSORS: tuple[PlexlogSensorEntityDescription, ...] = (
     ),
 )
 
+# --- Plant period energy sensors (kWh, from monthly/yearly/total data) ---
+PLANT_ENERGY_PERIOD_SENSORS: tuple[PlexlogSensorEntityDescription, ...] = (
+    PlexlogSensorEntityDescription(
+        key="plant_energy_production_month",
+        translation_key="plant_energy_production_month",
+        data_path="plant_monthly.Ertrag",
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        device_class=SensorDeviceClass.ENERGY,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+    ),
+    PlexlogSensorEntityDescription(
+        key="plant_energy_production_year",
+        translation_key="plant_energy_production_year",
+        data_path="plant_yearly.Ertrag",
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        device_class=SensorDeviceClass.ENERGY,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+    ),
+    PlexlogSensorEntityDescription(
+        key="plant_energy_production_total",
+        translation_key="plant_energy_production_total",
+        data_path="plant_total.Ertrag",
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        device_class=SensorDeviceClass.ENERGY,
+        state_class=SensorStateClass.TOTAL,
+    ),
+)
+
 # --- Plant info sensors (static/meta data) ---
 PLANT_INFO_SENSORS: tuple[PlexlogSensorEntityDescription, ...] = (
     PlexlogSensorEntityDescription(
@@ -200,6 +228,10 @@ async def async_setup_entry(
 
     # Add plant energy sensors
     for description in PLANT_ENERGY_SENSORS:
+        entities.append(PlexlogSensor(coordinator, entry, description))
+
+    # Add plant period energy sensors (month/year/total)
+    for description in PLANT_ENERGY_PERIOD_SENSORS:
         entities.append(PlexlogSensor(coordinator, entry, description))
 
     # Add plant info sensors

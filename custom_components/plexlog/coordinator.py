@@ -10,7 +10,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .api import PlexlogApi, PlexlogApiError, PlexlogAuthError
-from .const import DEFAULT_SCAN_INTERVAL, DOMAIN, INTERVAL_5MINS
+from .const import DEFAULT_SCAN_INTERVAL, DOMAIN, INTERVAL_5MINS, INTERVAL_MONTHLY, INTERVAL_YEARLY
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -47,6 +47,10 @@ class PlexlogCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         data: dict[str, Any] = {
             "plant_info": self.plant_info,
             "plant": {},
+            "plant_daily": {},
+            "plant_monthly": {},
+            "plant_yearly": {},
+            "plant_total": {},
             "inverter": {},
             "meter": {},
             "battery": {},
@@ -68,6 +72,30 @@ class PlexlogCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             )
             _LOGGER.debug("Plexlog daily data keys: %s", list(daily_data.keys()) if isinstance(daily_data, dict) else type(daily_data))
             data["plant_daily"] = self._extract_sums(daily_data)
+
+            # Fetch monthly totals for this month
+            now = datetime.now()
+            first_of_month = now.replace(day=1).strftime("%d.%m.%Y")
+            monthly_data = await self.api.async_get_plant_data(
+                from_date=first_of_month, to_date=today, interval=INTERVAL_MONTHLY
+            )
+            _LOGGER.debug("Plexlog monthly data keys: %s", list(monthly_data.keys()) if isinstance(monthly_data, dict) else type(monthly_data))
+            data["plant_monthly"] = self._extract_sums(monthly_data)
+
+            # Fetch yearly totals for this year
+            first_of_year = now.replace(month=1, day=1).strftime("%d.%m.%Y")
+            yearly_data = await self.api.async_get_plant_data(
+                from_date=first_of_year, to_date=today, interval=INTERVAL_YEARLY
+            )
+            _LOGGER.debug("Plexlog yearly data keys: %s", list(yearly_data.keys()) if isinstance(yearly_data, dict) else type(yearly_data))
+            data["plant_yearly"] = self._extract_sums(yearly_data)
+
+            # Fetch all-time total (yearly interval, from far in the past)
+            total_data = await self.api.async_get_plant_data(
+                from_date="01.01.2000", to_date=today, interval=INTERVAL_YEARLY
+            )
+            _LOGGER.debug("Plexlog total data keys: %s", list(total_data.keys()) if isinstance(total_data, dict) else type(total_data))
+            data["plant_total"] = self._extract_total(total_data)
 
         except PlexlogAuthError as err:
             raise UpdateFailed(f"Authentication failed: {err}") from err
@@ -171,6 +199,31 @@ class PlexlogCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                     result[key] = last_entry
                 else:
                     result[key] = last_entry
+            elif isinstance(value, (int, float)):
+                result[key] = value
+
+        return result
+
+    def _extract_total(self, response: Any) -> dict[str, Any]:
+        """Extract all-time totals by summing ALL entries across years."""
+        result: dict[str, Any] = {}
+        if not isinstance(response, dict):
+            return result
+
+        for key, value in response.items():
+            if isinstance(value, list) and value:
+                total = 0.0
+                for entry in value:
+                    if isinstance(entry, dict):
+                        val = self._get_entry_value(entry)
+                        if val is not None:
+                            try:
+                                total += float(val)
+                            except (ValueError, TypeError):
+                                pass
+                    elif isinstance(entry, (int, float)):
+                        total += float(entry)
+                result[key] = round(total, 2)
             elif isinstance(value, (int, float)):
                 result[key] = value
 

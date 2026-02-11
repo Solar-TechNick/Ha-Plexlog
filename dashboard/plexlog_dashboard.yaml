@@ -1,0 +1,161 @@
+# ============================================================
+# Plexlog PV Dashboard for Home Assistant
+# ============================================================
+# Replicates the Plexlog web portal layout with:
+#   - Overview panel (current power, yield today/month/year/total)
+#   - Daily power curve (Tagesansicht)
+#   - Monthly daily bars (Monatsansicht)
+#   - Yearly monthly bars (Jahresansicht)
+#   - All-time view (Gesamtansicht)
+#
+# SETUP:
+#   1. Replace ALL instances of "PLANT_NAME" below with your
+#      actual device name slug. To find it:
+#      - Go to Settings > Devices & Services > Plexlog
+#      - Click your device, look at any entity ID
+#      - The part before the sensor key is your slug
+#        Example: sensor.efgeldena_production_power
+#                 -> replace PLANT_NAME with "efgeldena"
+#
+#   2. In HA, go to Settings > Dashboards > Add Dashboard
+#      Choose "New dashboard from scratch" and use YAML mode
+#      Paste this content (without these comment headers)
+#
+# NOTE: Charts use HA's long-term statistics and will populate
+#       over time from when the integration was installed.
+# ============================================================
+
+title: Plexlog PV
+views:
+  - title: "\u00dcbersicht"
+    path: plexlog
+    type: sections
+    max_columns: 3
+    sections:
+
+      # =====================================================
+      # LEFT COLUMN: Overview
+      # =====================================================
+      - title: "\u00dcbersicht"
+        cards:
+          - type: entities
+            entities:
+              - entity: sensor.PLANT_NAME_plant_name
+                name: Anlage
+              - type: divider
+              - entity: sensor.PLANT_NAME_plant_power_production
+                name: Aktuelle Leistung
+                icon: mdi:solar-power-variant
+              - type: divider
+              - entity: sensor.PLANT_NAME_plant_energy_production_today
+                name: Ertrag heute
+                icon: mdi:white-balance-sunny
+              - entity: sensor.PLANT_NAME_plant_energy_production_month
+                name: Ertrag diesen Monat
+                icon: mdi:calendar-month
+              - entity: sensor.PLANT_NAME_plant_energy_production_year
+                name: Ertrag dieses Jahr
+                icon: mdi:calendar
+              - entity: sensor.PLANT_NAME_plant_energy_production_total
+                name: Ertrag gesamt
+                icon: mdi:sigma
+
+          - type: entities
+            title: Verbrauch
+            entities:
+              - entity: sensor.PLANT_NAME_plant_power_consumption
+                name: Verbrauch aktuell
+                icon: mdi:home-lightning-bolt
+              - entity: sensor.PLANT_NAME_plant_power_grid_feedin
+                name: Einspeisung
+                icon: mdi:transmission-tower-export
+              - entity: sensor.PLANT_NAME_plant_power_grid_consumption
+                name: Netzbezug
+                icon: mdi:transmission-tower-import
+              - entity: sensor.PLANT_NAME_plant_power_self_consumption
+                name: Eigenverbrauch
+                icon: mdi:home-battery
+
+      # =====================================================
+      # MIDDLE COLUMN: Day + Year charts
+      # =====================================================
+      - title: ""
+        cards:
+          # TAGESANSICHT - Daily power curve (line chart)
+          - type: statistics-graph
+            title: Tagesansicht
+            entities:
+              - entity: sensor.PLANT_NAME_plant_power_production
+                name: Erzeugung
+            chart_type: line
+            period: 5minute
+            days_to_show: 1
+            stat_types:
+              - mean
+
+          # JAHRESANSICHT - Monthly yield bars for this year
+          - type: statistics-graph
+            title: Jahresansicht
+            entities:
+              - entity: sensor.PLANT_NAME_plant_energy_production_today
+                name: Erzeugung
+            chart_type: bar
+            period: month
+            days_to_show: 365
+            stat_types:
+              - change
+
+      # =====================================================
+      # RIGHT COLUMN: Month + Total charts
+      # =====================================================
+      - title: ""
+        cards:
+          # MONATSANSICHT - Daily yield bars for this month
+          - type: statistics-graph
+            title: Monatsansicht
+            entities:
+              - entity: sensor.PLANT_NAME_plant_energy_production_today
+                name: Erzeugung
+            chart_type: bar
+            period: day
+            days_to_show: 31
+            stat_types:
+              - change
+
+          # GESAMTANSICHT - All-time view (monthly bars)
+          # Note: statistics-graph doesn't support period: year
+          # so this shows monthly bars across all time
+          - type: statistics-graph
+            title: Gesamtansicht
+            entities:
+              - entity: sensor.PLANT_NAME_plant_energy_production_today
+                name: Erzeugung
+            chart_type: bar
+            period: month
+            days_to_show: 3650
+            stat_types:
+              - change
+
+          ## -------------------------------------------------
+          ## ALTERNATIVE: True yearly bars with apexcharts-card
+          ## Install via HACS, then replace the Gesamtansicht
+          ## statistics-graph above with this:
+          ## -------------------------------------------------
+          # - type: custom:apexcharts-card
+          #   header:
+          #     title: Gesamtansicht
+          #     show: true
+          #   graph_span: 10y
+          #   span:
+          #     end: now
+          #   series:
+          #     - entity: sensor.PLANT_NAME_plant_energy_production_today
+          #       type: column
+          #       name: Erzeugung
+          #       color: "#FFC107"
+          #       statistics:
+          #         type: change
+          #         period: month
+          #       group_by:
+          #         func: sum
+          #         duration: 365d

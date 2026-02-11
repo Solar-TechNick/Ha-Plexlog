@@ -41,6 +41,9 @@
       "plant_energy_self_consumption_today": { "name": "Eigenverbrauch heute" },
       "plant_energy_battery_charged_today": { "name": "Batterie geladen heute" },
       "plant_energy_battery_discharged_today": { "name": "Batterie entladen heute" },
+      "plant_energy_production_month": { "name": "Erzeugung diesen Monat" },
+      "plant_energy_production_year": { "name": "Erzeugung dieses Jahr" },
+      "plant_energy_production_total": { "name": "Erzeugung gesamt" },
       "plant_name": { "name": "Anlagenname" },
       "plant_capacity": { "name": "Anlagenleistung" },
       "plant_annual_target": { "name": "Jahressoll" }

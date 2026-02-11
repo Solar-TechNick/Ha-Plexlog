@@ -41,6 +41,9 @@
       "plant_energy_self_consumption_today": { "name": "Self-Consumption Today" },
       "plant_energy_battery_charged_today": { "name": "Battery Charged Today" },
       "plant_energy_battery_discharged_today": { "name": "Battery Discharged Today" },
+      "plant_energy_production_month": { "name": "Production This Month" },
+      "plant_energy_production_year": { "name": "Production This Year" },
+      "plant_energy_production_total": { "name": "Production Total" },
       "plant_name": { "name": "Plant Name" },
       "plant_capacity": { "name": "Plant Capacity" },
       "plant_annual_target": { "name": "Annual Target" }
