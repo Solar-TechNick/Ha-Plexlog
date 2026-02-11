@@ -1,0 +1,49 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Mit Plexlog verbinden",
+        "description": "Geben Sie Ihre Plexlog Portal-URL, den API-Schl\u00fcssel und die Anlagen-ID ein. Den API-Schl\u00fcssel finden Sie im Portal unter Anlageneinstellungen. Die Anlagen-ID ist in der Dashboard-URL sichtbar.",
+        "data": {
+          "base_url": "Portal-URL",
+          "api_key": "API-Schl\u00fcssel",
+          "plant_id": "Anlagen-ID"
+        },
+        "data_description": {
+          "base_url": "z.B. https://ihrreseller.data4.plexlog.de",
+          "api_key": "API-Schl\u00fcssel aus den Anlageneinstellungen im Portal",
+          "plant_id": "Numerische Anlagen-ID aus der Dashboard-URL"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Verbindung zum Plexlog-Portal nicht m\u00f6glich. Bitte \u00fcberpr\u00fcfen Sie die URL.",
+      "invalid_auth": "Ung\u00fcltiger API-Schl\u00fcssel oder fehlende Berechtigung. Bitte \u00fcberpr\u00fcfen Sie Ihre Zugangsdaten.",
+      "unknown": "Ein unerwarteter Fehler ist aufgetreten."
+    },
+    "abort": {
+      "already_configured": "Diese Anlage ist bereits konfiguriert."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "plant_power_production": { "name": "Erzeugungsleistung" },
+      "plant_power_consumption": { "name": "Verbrauchsleistung" },
+      "plant_power_grid_feedin": { "name": "Einspeiseleistung" },
+      "plant_power_grid_consumption": { "name": "Netzbezugsleistung" },
+      "plant_power_self_consumption": { "name": "Eigenverbrauchsleistung" },
+      "plant_power_battery_charging": { "name": "Batterieladeleistung" },
+      "plant_power_battery_discharging": { "name": "Batterieentladeleistung" },
+      "plant_energy_production_today": { "name": "Erzeugung heute" },
+      "plant_energy_consumption_today": { "name": "Verbrauch heute" },
+      "plant_energy_grid_feedin_today": { "name": "Einspeisung heute" },
+      "plant_energy_grid_consumption_today": { "name": "Netzbezug heute" },
+      "plant_energy_self_consumption_today": { "name": "Eigenverbrauch heute" },
+      "plant_energy_battery_charged_today": { "name": "Batterie geladen heute" },
+      "plant_energy_battery_discharged_today": { "name": "Batterie entladen heute" },
+      "plant_name": { "name": "Anlagenname" },
+      "plant_capacity": { "name": "Anlagenleistung" },
+      "plant_annual_target": { "name": "Jahressoll" }
+    }
+  }
+}
