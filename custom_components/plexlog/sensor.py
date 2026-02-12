@@ -33,7 +33,7 @@ PLANT_POWER_SENSORS: tuple[PlexlogSensorEntityDescription, ...] = (
     PlexlogSensorEntityDescription(
         key="plant_power_production",
         translation_key="plant_power_production",
-        data_path="plant.Ertrag",
+        data_path="plant.yield",
         native_unit_of_measurement=UnitOfPower.WATT,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
@@ -41,7 +41,7 @@ PLANT_POWER_SENSORS: tuple[PlexlogSensorEntityDescription, ...] = (
     PlexlogSensorEntityDescription(
         key="plant_power_consumption",
         translation_key="plant_power_consumption",
-        data_path="plant.Verbrauch",
+        data_path="plant.consumption",
         native_unit_of_measurement=UnitOfPower.WATT,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
@@ -49,7 +49,7 @@ PLANT_POWER_SENSORS: tuple[PlexlogSensorEntityDescription, ...] = (
     PlexlogSensorEntityDescription(
         key="plant_power_grid_feedin",
         translation_key="plant_power_grid_feedin",
-        data_path="plant.Einspeisung",
+        data_path="plant.feed-in",
         native_unit_of_measurement=UnitOfPower.WATT,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
@@ -57,7 +57,7 @@ PLANT_POWER_SENSORS: tuple[PlexlogSensorEntityDescription, ...] = (
     PlexlogSensorEntityDescription(
         key="plant_power_grid_consumption",
         translation_key="plant_power_grid_consumption",
-        data_path="plant.Bezug",
+        data_path="plant.purchase",
         native_unit_of_measurement=UnitOfPower.WATT,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
@@ -65,7 +65,7 @@ PLANT_POWER_SENSORS: tuple[PlexlogSensorEntityDescription, ...] = (
     PlexlogSensorEntityDescription(
         key="plant_power_self_consumption",
         translation_key="plant_power_self_consumption",
-        data_path="plant.Eigenverbrauch",
+        data_path="plant.ownconsumption",
         native_unit_of_measurement=UnitOfPower.WATT,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
@@ -73,7 +73,7 @@ PLANT_POWER_SENSORS: tuple[PlexlogSensorEntityDescription, ...] = (
     PlexlogSensorEntityDescription(
         key="plant_power_battery_charging",
         translation_key="plant_power_battery_charging",
-        data_path="plant.Laden",
+        data_path="plant.charge",
         native_unit_of_measurement=UnitOfPower.WATT,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
@@ -81,7 +81,7 @@ PLANT_POWER_SENSORS: tuple[PlexlogSensorEntityDescription, ...] = (
     PlexlogSensorEntityDescription(
         key="plant_power_battery_discharging",
         translation_key="plant_power_battery_discharging",
-        data_path="plant.Entladen",
+        data_path="plant.discharge",
         native_unit_of_measurement=UnitOfPower.WATT,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
@@ -93,7 +93,7 @@ PLANT_ENERGY_SENSORS: tuple[PlexlogSensorEntityDescription, ...] = (
     PlexlogSensorEntityDescription(
         key="plant_energy_production_today",
         translation_key="plant_energy_production_today",
-        data_path="plant_daily.Ertrag",
+        data_path="plant_daily.yield",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -101,7 +101,7 @@ PLANT_ENERGY_SENSORS: tuple[PlexlogSensorEntityDescription, ...] = (
     PlexlogSensorEntityDescription(
         key="plant_energy_consumption_today",
         translation_key="plant_energy_consumption_today",
-        data_path="plant_daily.Verbrauch",
+        data_path="plant_daily.consumption",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -109,7 +109,7 @@ PLANT_ENERGY_SENSORS: tuple[PlexlogSensorEntityDescription, ...] = (
     PlexlogSensorEntityDescription(
         key="plant_energy_grid_feedin_today",
         translation_key="plant_energy_grid_feedin_today",
-        data_path="plant_daily.Einspeisung",
+        data_path="plant_daily.feed-in",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -117,7 +117,7 @@ PLANT_ENERGY_SENSORS: tuple[PlexlogSensorEntityDescription, ...] = (
     PlexlogSensorEntityDescription(
         key="plant_energy_grid_consumption_today",
         translation_key="plant_energy_grid_consumption_today",
-        data_path="plant_daily.Bezug",
+        data_path="plant_daily.purchase",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -125,7 +125,7 @@ PLANT_ENERGY_SENSORS: tuple[PlexlogSensorEntityDescription, ...] = (
     PlexlogSensorEntityDescription(
         key="plant_energy_self_consumption_today",
         translation_key="plant_energy_self_consumption_today",
-        data_path="plant_daily.Eigenverbrauch",
+        data_path="plant_daily.ownconsumption",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -133,7 +133,7 @@ PLANT_ENERGY_SENSORS: tuple[PlexlogSensorEntityDescription, ...] = (
     PlexlogSensorEntityDescription(
         key="plant_energy_battery_charged_today",
         translation_key="plant_energy_battery_charged_today",
-        data_path="plant_daily.Laden",
+        data_path="plant_daily.charge",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -141,7 +141,7 @@ PLANT_ENERGY_SENSORS: tuple[PlexlogSensorEntityDescription, ...] = (
     PlexlogSensorEntityDescription(
         key="plant_energy_battery_discharged_today",
         translation_key="plant_energy_battery_discharged_today",
-        data_path="plant_daily.Entladen",
+        data_path="plant_daily.discharge",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -153,7 +153,7 @@ PLANT_ENERGY_PERIOD_SENSORS: tuple[PlexlogSensorEntityDescription, ...] = (
     PlexlogSensorEntityDescription(
         key="plant_energy_production_month",
         translation_key="plant_energy_production_month",
-        data_path="plant_monthly.Ertrag",
+        data_path="plant_monthly.yield",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -161,7 +161,7 @@ PLANT_ENERGY_PERIOD_SENSORS: tuple[PlexlogSensorEntityDescription, ...] = (
     PlexlogSensorEntityDescription(
         key="plant_energy_production_year",
         translation_key="plant_energy_production_year",
-        data_path="plant_yearly.Ertrag",
+        data_path="plant_yearly.yield",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -169,7 +169,7 @@ PLANT_ENERGY_PERIOD_SENSORS: tuple[PlexlogSensorEntityDescription, ...] = (
     PlexlogSensorEntityDescription(
         key="plant_energy_production_total",
         translation_key="plant_energy_production_total",
-        data_path="plant_total.Ertrag",
+        data_path="plant_total.yield",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL,
@@ -316,9 +316,9 @@ class PlexlogDeviceSensor(CoordinatorEntity[PlexlogCoordinator], SensorEntity):
         self._attr_translation_key = f"{device_type}_{metric_key}"
 
         # Determine unit and device class based on metric key
-        power_metrics = {"Ertrag", "Verbrauch", "Einspeisung", "Bezug",
-                         "Eigenverbrauch", "Laden", "Entladen", "Leistung",
-                         "AC_Leistung", "DC_Leistung"}
+        power_metrics = {"yield", "consumption", "feed-in", "purchase",
+                         "ownconsumption", "charge", "discharge", "power",
+                         "ac_power", "dc_power"}
         if metric_key in power_metrics:
             self._attr_native_unit_of_measurement = UnitOfPower.WATT
             self._attr_device_class = SensorDeviceClass.POWER
