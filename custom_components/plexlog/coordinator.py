@@ -155,24 +155,29 @@ class PlexlogCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         The API returns lists of {timestamp, value} pairs per metric.
         We extract the last (most recent) value from each.
+        Empty arrays mean the metric exists but has no data right now (value = 0).
         """
         result: dict[str, Any] = {}
         if not isinstance(response, dict):
             return result
 
         for key, value in response.items():
-            if isinstance(value, list) and value:
-                last_entry = value[-1]
-                if isinstance(last_entry, dict):
-                    val = self._get_entry_value(last_entry)
-                    if val is not None:
-                        result[key] = val
+            if isinstance(value, list):
+                if value:
+                    last_entry = value[-1]
+                    if isinstance(last_entry, dict):
+                        val = self._get_entry_value(last_entry)
+                        if val is not None:
+                            result[key] = val
+                        else:
+                            result[key] = last_entry
+                    elif isinstance(last_entry, (int, float)):
+                        result[key] = last_entry
                     else:
                         result[key] = last_entry
-                elif isinstance(last_entry, (int, float)):
-                    result[key] = last_entry
                 else:
-                    result[key] = last_entry
+                    # Empty array: metric exists but no data right now
+                    result[key] = 0
             elif isinstance(value, (int, float)):
                 result[key] = value
             elif isinstance(value, str):
@@ -181,24 +186,30 @@ class PlexlogCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         return result
 
     def _extract_sums(self, response: Any) -> dict[str, Any]:
-        """Extract daily sum values from a daily interval response."""
+        """Extract daily sum values from a daily interval response.
+
+        Empty arrays mean the metric exists but has no data (value = 0).
+        """
         result: dict[str, Any] = {}
         if not isinstance(response, dict):
             return result
 
         for key, value in response.items():
-            if isinstance(value, list) and value:
-                last_entry = value[-1]
-                if isinstance(last_entry, dict):
-                    val = self._get_entry_value(last_entry)
-                    if val is not None:
-                        result[key] = val
+            if isinstance(value, list):
+                if value:
+                    last_entry = value[-1]
+                    if isinstance(last_entry, dict):
+                        val = self._get_entry_value(last_entry)
+                        if val is not None:
+                            result[key] = val
+                        else:
+                            result[key] = last_entry
+                    elif isinstance(last_entry, (int, float)):
+                        result[key] = last_entry
                     else:
                         result[key] = last_entry
-                elif isinstance(last_entry, (int, float)):
-                    result[key] = last_entry
                 else:
-                    result[key] = last_entry
+                    result[key] = 0
             elif isinstance(value, (int, float)):
                 result[key] = value
 
